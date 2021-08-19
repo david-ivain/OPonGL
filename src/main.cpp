@@ -12,12 +12,11 @@
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <cstdio>
+#include <cstring>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <memory>
-#include <unordered_map>
 
 void handleKey(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -79,7 +78,10 @@ class Timer
 
 int main(int argc, char const* argv[])
 {
-    Renderer::Init();
+    auto baseWindowTitle = "Pong FPS: 00.00";
+    char windowTitle[32];
+    std::strcpy(windowTitle, baseWindowTitle);
+    Renderer::Init(windowTitle);
     Game game;
     float* t = glm::value_ptr(game.ballTransform);
     InputSystem::Bind(&game, &handleKey);
@@ -96,12 +98,11 @@ int main(int argc, char const* argv[])
         }
         else
         {
-            std::fprintf(stdout, "FPS: %.2f        \r", 1.0f / (sDelta / c));
+            std::snprintf(windowTitle, sizeof(windowTitle), "Pong FPS: %.2f", 1.0f / (sDelta / c));
+            Renderer::SetWindowTitle(windowTitle);
             c = 0;
             sDelta = 0;
         }
-
-        fflush(stdout);
         game.Update(delta);
         Renderer::Clear();
         Renderer::AdaptAspect();

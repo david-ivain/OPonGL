@@ -24,7 +24,9 @@ template <> void Renderer::SetUniform<glm::mat4>(UniformID id, glm::mat4 value)
     glProgramUniformMatrix4fv(shaderProgram, uniforms[id], 1, false, glm::value_ptr(value));
 }
 
-void Renderer::Init()
+void Renderer::Init() { Init("Window"); }
+
+void Renderer::Init(const char* title)
 {
     if (!glfwInit())
     {
@@ -35,7 +37,7 @@ void Renderer::Init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(800, 600, "Pong", nullptr, nullptr);
+    window = glfwCreateWindow(800, 600, title, nullptr, nullptr);
     if (!window)
     {
         DEBUG_FPRINTF(stderr, "Error: Failed to create window.");
@@ -139,3 +141,5 @@ void Renderer::Render(Quad quad, glm::mat4 transform)
     /* Draw Elements */
     glDrawElements(GL_TRIANGLES, quad.indices.size(), GL_UNSIGNED_INT, 0);
 }
+
+void Renderer::SetWindowTitle(const char* title) { glfwSetWindowTitle(window, title); }
