@@ -4,6 +4,28 @@ Just a simple pong recreation using [OpenGL](https://www.opengl.org/) 3.3 core, 
 
 ![Screenshot](readme_files/v1_white_rectangles_on_black_bg.png)
 
+## How to use
+
+Here are some simple steps to build and launch the project.
+
+#### Prerequisites:
+- git
+- cmake (^3.22)\*
+- OpenGL 3.3 compatible graphics
+
+### Mac and Linux\**
+
+#### Prerequisites:
+- clang, g++ should work too
+- XCode Command Line Tools on Mac
+
+Open the terminal, cd to the project's root and type in the following lines.
+```shell
+./configure.sh
+./build.sh
+./run.sh
+```
+
 ## Features:
 - [x] Display the bats and the ball
 - [ ] Display arena (background or something)
@@ -23,7 +45,6 @@ Just a simple pong recreation using [OpenGL](https://www.opengl.org/) 3.3 core, 
 - [ ] Main menu
 - [ ] In-game settings (arena size, bat/ball velocity/size, difficulty, v-sync, etc.)
 
-## Other Future Improvements
-- Refactor the code
-- Optimize some of it
-- Check if it runs on anything other than MacOS, I have no idea at the moment.
+\* Could most likely work with an older version but that's the one I configured in the CMakeLists.txt because that's the one I have on my system. Just edit CMakeLists.txt and see if it works.
+
+\** Not tested on Linux and Windows
