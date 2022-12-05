@@ -4,7 +4,8 @@
             "name": "Mac",
             "includePath": [
                 "${default}",
-                "${workspaceRoot}/src/**"
+                "${workspaceRoot}/src/**",
+                "${workspaceFolder}/build/vcpkg_installed/x64-osx/include"
             ],
             "defines": [],
             "macFrameworkPath": [

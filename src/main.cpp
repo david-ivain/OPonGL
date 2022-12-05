@@ -89,6 +89,8 @@ int main(int argc, char const *argv[])
         exit(static_cast<int>(ExitCodes::WindowInitFailed));
     }
     window.make_current();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     ren::set_clear_color(CLEAR_COLOR[0], CLEAR_COLOR[1], CLEAR_COLOR[2], CLEAR_COLOR[3]);
     ren::set_swap_interval(vsync_enabled);
 
