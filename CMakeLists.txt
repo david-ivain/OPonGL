@@ -10,7 +10,8 @@ add_compile_definitions(GL_SILENCE_DEPRECATION)
 endif ()
 
 find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_executable(pong
 src/main.cpp
@@ -29,7 +30,7 @@ src/utils/framecounter.h
 src/utils/framecounter.cpp
 )
 
-target_link_libraries(pong glfw ${OPENGL_LIBRARIES})
+target_link_libraries(pong glfw glm::glm ${OPENGL_LIBRARIES})
 set_target_properties(pong PROPERTIES
 MACOSX_BUNDLE TRUE
 MACOSX_FRAMEWORK_IDENTIFIER me.davidivain.pong)
