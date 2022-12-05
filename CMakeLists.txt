@@ -33,10 +33,14 @@ src/utils/framecounter.cpp
 target_link_libraries(pong glfw glm::glm ${OPENGL_LIBRARIES})
 set_target_properties(pong PROPERTIES
 MACOSX_BUNDLE TRUE
+MACOSX_BUNDLE_BUNDLE_NAME Pong
+MACOSX_BUNDLE_BUNDLE_DISPLAY_NAME Pong
+MACOSX_BUNDLE_ICON_FILE pong.icns
 MACOSX_FRAMEWORK_IDENTIFIER me.davidivain.pong)
 
 if (APPLE)
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/pong.app/Contents/Resources)
+file(COPY icons/mac/pong.icns DESTINATION ${CMAKE_BINARY_DIR}/pong.app/Contents/Resources)
 else ()
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 endif ()
