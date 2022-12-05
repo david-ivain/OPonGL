@@ -17,6 +17,14 @@ namespace ren
     /// @brief A mesh to be displayed with ren::draw_instances
     struct Mesh
     {
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+
+        /// @brief Makes a quad with specified width and height
+        /// @param width
+        /// @param height
+        /// @return
+        static Mesh quadFrom(float width, float height);
+
         /// @brief The mesh's vertices
         std::vector<Vertex> vertices;
         /// @brief The index for each vertex
@@ -27,14 +35,6 @@ namespace ren
         unsigned int VBO;
         /// @brief Element Buffer Object
         unsigned int EBO;
-
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
-
-        /// @brief Makes a quad with specified width and height
-        /// @param width
-        /// @param height
-        /// @return
-        static Mesh quadFrom(float width, float height);
 
     private:
         /// @brief Sets up the mesh in opengl

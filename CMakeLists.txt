@@ -16,10 +16,13 @@ add_executable(pong
 src/main.cpp
 src/game/game.h
 src/game/game.cpp
+src/ren/glheaders.h
 src/ren/ren.h
 src/ren/ren.cpp
 src/ren/mesh.h
 src/ren/mesh.cpp
+src/ren/shader.h
+src/ren/shader.cpp
 src/utils/timer.h
 src/utils/timer.cpp
 src/utils/framecounter.h

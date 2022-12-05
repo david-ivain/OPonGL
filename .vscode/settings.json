@@ -72,7 +72,8 @@
         "filesystem": "cpp",
         "__tree": "cpp",
         "map": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "memory_resource": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}"

@@ -1,14 +1,12 @@
 #include "ren.h"
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#endif
-#include <iostream>
+#include <cstdio>
 #include <fstream>
 #include <vector>
 #include <unordered_map>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "shader.h"
 
 namespace ren
 {
@@ -16,13 +14,13 @@ namespace ren
 
     Window::Window(GLFWwindow *window) : window(window)
     {
-        std::cout << "Log: Window constructed." << std::endl;
+        std::printf("Log: Window constructed.\n");
     }
 
     Window::Window(const std::string &title)
     {
         window = glfwCreateWindow(800, 600, title.c_str(), nullptr, nullptr);
-        std::cout << "Log: Window constructed." << std::endl;
+        std::printf("Log: Window constructed.\n");
     }
 
     Window::Window(Window &&window) : window(std::move(window.window))
@@ -35,13 +33,13 @@ namespace ren
         if (window == nullptr)
             return;
         glfwDestroyWindow(window);
-        std::cout << "Log: Window destroyed." << std::endl;
+        std::printf("Log: Window destroyed.\n");
     }
 
     void Window::make_current()
     {
         glfwMakeContextCurrent(window);
-        std::cout << "Log: Window made current." << std::endl;
+        std::printf("Log: Window made current.\n");
     }
 
     bool Window::sould_close()
@@ -72,28 +70,29 @@ namespace ren
         glfwSetKeyCallback(window, callback);
     }
 
+    GLFWwindow *Window::get_pointer()
+    {
+        return window;
+    }
+
     // GLFW
 
     bool glfw_is_initialized = false;
-    GLuint vs;
-    GLuint fs;
-    GLuint shaderProgram;
-    std::unordered_map<std::string, GLuint> uniforms;
     std::unordered_map<const Mesh *, const std::vector<glm::mat4> *> instances;
 
     bool init()
     {
         if (glfw_is_initialized)
             return true;
-        std::cout << "Log: GLFW init attempt." << std::endl;
+        std::printf("Log: GLFW init attempt.\n");
         glfw_is_initialized = glfwInit();
         return glfw_is_initialized;
     }
 
-    std::optional<Window> create_window(const std::string &title)
+    Window create_window(const std::string &title)
     {
         GLFWwindow *window = glfwCreateWindow(800, 600, title.c_str(), nullptr, nullptr);
-        return window ? std::optional<Window>{window} : std::nullopt;
+        return {window};
     }
 
     void set_window_hints()
@@ -102,85 +101,28 @@ namespace ren
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        std::cout << "Log: GLFW window hints set." << std::endl;
-    }
-
-    bool init_shaders()
-    {
-        vs = glCreateShader(GL_VERTEX_SHADER);
-        std::ifstream ifs("./assets/shaders/white.vert");
-        std::string vSource((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-        const char *vsSource = vSource.c_str();
-        ifs.close();
-        glShaderSource(vs, 1, &vsSource, NULL);
-        glCompileShader(vs);
-        int success = 0;
-        GLsizei logLength;
-        GLchar log[1024];
-        glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-        if (success != GL_TRUE)
-        {
-            glGetShaderInfoLog(vs, sizeof(log), &logLength, log);
-            std::fprintf(stderr, "VS: %s", log);
-            return false;
-        }
-        fs = glCreateShader(GL_FRAGMENT_SHADER);
-        std::ifstream ifs2("./assets/shaders/white.frag");
-        std::string fSource((std::istreambuf_iterator<char>(ifs2)), (std::istreambuf_iterator<char>()));
-        const char *fsSource = fSource.c_str();
-        ifs2.close();
-        glShaderSource(fs, 1, &fsSource, NULL);
-        glCompileShader(fs);
-        success = 0;
-        glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-        if (success != GL_TRUE)
-        {
-            glGetShaderInfoLog(fs, sizeof(log), &logLength, log);
-            std::fprintf(stderr, "FS: %s", log);
-            return false;
-        }
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vs);
-        glAttachShader(shaderProgram, fs);
-        glLinkProgram(shaderProgram);
-        success = 0;
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if (success != GL_TRUE)
-        {
-            glGetProgramInfoLog(shaderProgram, sizeof(log), &logLength, log);
-            std::fprintf(stderr, "SP: %s", log);
-            return false;
-        }
-        glUseProgram(shaderProgram);
-        uniforms["aspect"] = glGetUniformLocation(shaderProgram, "aspect");
-        std::printf("Log: aspect uniform %d.\n", uniforms["aspect"]);
-        return true;
+        std::printf("Log: GLFW window hints set.\n");
     }
 
     void set_clear_color(float r, float g, float b, float a)
     {
         glClearColor(r, g, b, a);
-        std::cout << "Log: GL clear color set." << std::endl;
+        std::printf("Log: GL clear color set.\n");
     }
 
     void terminate()
     {
         glfwTerminate();
         glfw_is_initialized = false;
-        std::cout << "Log: GLFW terminated." << std::endl;
+        std::printf("Log: GLFW terminated.\n");
     }
 
     void set_swap_interval(int interval)
     {
         glfwSwapInterval(interval);
-        std::cout << "Log: GLFW swap interval set to " << interval << "." << std::endl;
+        std::printf("Log: GLFW swap interval set to %d.\n", interval);
     }
 
-    template <>
-    void set_uniform(const std::string &id, const float &value)
-    {
-        glProgramUniform1f(shaderProgram, uniforms[id], value);
-    }
     // template <>
     // void set_uniform(const std::string &id, const glm::mat4 &value)
     // {
@@ -222,7 +164,6 @@ namespace ren
 
     void draw_instances(const Mesh *mesh, unsigned int buffer)
     {
-        // std::cout << glm::to_string(instances[mesh]->at(0)) << std::endl;
         glBindVertexArray(mesh->VAO);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, instances[mesh]->size() * sizeof(glm::mat4), instances[mesh]->data(), GL_STATIC_DRAW);

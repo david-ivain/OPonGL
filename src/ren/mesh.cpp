@@ -1,10 +1,6 @@
 #include "mesh.h"
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#endif
-#include <GLFW/glfw3.h>
+#include "glheaders.h"
 
 namespace ren
 {

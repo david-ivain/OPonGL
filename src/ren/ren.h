@@ -1,10 +1,9 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <string>
-#include <optional>
 #include <glm/glm.hpp>
 
+#include "glheaders.h"
 #include "mesh.h"
 
 typedef struct GLFWwindow GLFWwindow;
@@ -14,18 +13,15 @@ namespace ren
     class Window;
 
     /// @brief An idiomatic wrapper for GLFWwindow
-    class Window
+    struct Window
     {
-        /// @brief A pointer to a GLFWwindow
-        GLFWwindow *window;
-
-    public:
         /// @param window A pointer to a GLFWwindow
         Window(GLFWwindow *window);
         /// @param title The window title
         Window(const std::string &title);
         Window(Window &&window);
         ~Window();
+
         /// @brief Makes this window the current context
         void make_current();
         /// @return If the window should close
@@ -38,6 +34,12 @@ namespace ren
         /// @brief Swaps frame buffers
         void swap_buffers();
         void add_listener(void *pointer, GLFWkeyfun callback);
+        /// @return The GLFWwindow pointer
+        GLFWwindow *get_pointer();
+
+    private:
+        /// @brief A pointer to a GLFWwindow
+        GLFWwindow *window;
     };
 
     struct GLFWData;
@@ -48,7 +50,7 @@ namespace ren
     /// @brief Attempts to create an instance of Window
     /// @param title The title of the window
     /// @return If successful the created Window else nothing
-    std::optional<Window> create_window(const std::string &title);
+    Window create_window(const std::string &title);
     /// @brief Sets up OpenGL window hints
     void set_window_hints();
     /// @brief Initializes default shaders
