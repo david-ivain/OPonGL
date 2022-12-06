@@ -34,6 +34,8 @@ struct Window {
     void add_listener(void* pointer, GLFWkeyfun callback);
     /// @return The GLFWwindow pointer
     GLFWwindow* get_pointer();
+    /// @return glm::vec2 the context's size in pixels
+    glm::vec2 get_size();
 
 private:
     /// @brief A pointer to a GLFWwindow

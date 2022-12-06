@@ -76,6 +76,13 @@ GLFWwindow* Window::get_pointer()
     return window;
 }
 
+glm::vec2 Window::get_size()
+{
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    return glm::vec2(width, height);
+};
+
 // GLFW
 
 bool glfw_is_initialized = false;

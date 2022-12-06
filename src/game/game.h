@@ -22,7 +22,7 @@ struct Game {
     /// @brief Launches the ball
     void launch();
 
-    ren::Mesh bat_mesh = ren::Mesh::quadFrom(0.1, 0.4), ball_mesh = ren::Mesh::quadFrom(0.1, 0.1);
+    ren::Mesh bat_mesh = ren::Mesh::quadFrom(BAT_SIZE.x, BAT_SIZE.y), ball_mesh = ren::Mesh::quadFrom(BALL_SIZE.x, BALL_SIZE.y);
     std::vector<glm::mat4> bat_transforms { glm::mat4(1.0), glm::mat4(1.0) }, ball_transforms { glm::mat4(1.0) };
     std::array<int, 2> bat_axis { 0, 0 };
     glm::vec2 ball_movement { 0, 0 };

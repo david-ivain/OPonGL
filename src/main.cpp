@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
 #include <vector>
 
 #include "game/game.h"
@@ -99,29 +100,65 @@ int main(int argc, char const* argv[])
 
     // init shader programs
 
-    auto shader_program = []() -> decltype(auto) {
+    auto vertex_shader = []() -> decltype(auto) {
         try {
-            auto vertex_shader = ren::Shader::from_file("./assets/shaders/white.vert",
+            return ren::Shader::from_file("./assets/shaders/white.vert",
                 GL_VERTEX_SHADER);
-            auto fragment_shader = ren::Shader::from_file(
-                "./assets/shaders/white.frag", GL_FRAGMENT_SHADER);
-            ren::ShaderProgram shader_program;
-            shader_program.attach(vertex_shader);
-            shader_program.attach(fragment_shader);
-            shader_program.link();
-            shader_program.use();
-            return shader_program;
-        } catch (std::runtime_error& e) {
+        } catch (std::runtime_error e) {
+            std::fprintf(stderr, "Error: Failed to initialize shaders.\n");
+            exit(static_cast<int>(ExitCodes::ShadersInitFailed));
+        }
+    }();
+    auto fragment_shader = []() -> decltype(auto) {
+        try {
+            return ren::Shader::from_file("./assets/shaders/white.frag",
+                GL_FRAGMENT_SHADER);
+        } catch (std::runtime_error e) {
+            std::fprintf(stderr, "Error: Failed to initialize shaders.\n");
+            exit(static_cast<int>(ExitCodes::ShadersInitFailed));
+        }
+    }();
+    auto ball_shader = []() -> decltype(auto) {
+        try {
+            return ren::Shader::from_file("./assets/shaders/ball.frag",
+                GL_FRAGMENT_SHADER);
+        } catch (std::runtime_error e) {
             std::fprintf(stderr, "Error: Failed to initialize shaders.\n");
             exit(static_cast<int>(ExitCodes::ShadersInitFailed));
         }
     }();
 
+    ren::ShaderProgram shader_program;
+    shader_program.attach(vertex_shader);
+    shader_program.attach(fragment_shader);
+    try {
+        shader_program.link();
+    } catch (std::runtime_error e) {
+        std::fprintf(stderr, "Error: Failed to initialize shaders.\n");
+        exit(static_cast<int>(ExitCodes::ShadersInitFailed));
+    }
+
+    ren::ShaderProgram ball_program;
+    ball_program.attach(vertex_shader);
+    ball_program.attach(ball_shader);
+    try {
+        ball_program.link();
+    } catch (std::runtime_error e) {
+        std::fprintf(stderr, "Error: Failed to initialize shaders.\n");
+        exit(static_cast<int>(ExitCodes::ShadersInitFailed));
+    }
+
     auto aspect_location = shader_program.get_uniform_location("aspect");
-    if (aspect_location == -1) {
-        std::fprintf(stderr, "Error: Failed to get uniform aspect location.\n");
+    auto aspect_location_ball = ball_program.get_uniform_location("aspect");
+    auto resolution_location = ball_program.get_uniform_location("u_resolution");
+    auto center_location = ball_program.get_uniform_location("u_center");
+    auto radius_location = ball_program.get_uniform_location("u_radius");
+    if (aspect_location == -1 || aspect_location_ball == -1 || resolution_location == -1 || center_location == -1 || radius_location == -1) {
+        std::fprintf(stderr, "Error: Failed to get uniform location.\n");
         exit(static_cast<int>(ExitCodes::UniformGetLocationFailed));
     }
+
+    ball_program.set_uniform(radius_location, BALL_SIZE.x / 2);
 
     // instanciate meshes
 
@@ -159,8 +196,14 @@ int main(int argc, char const* argv[])
         // clear > draw
 
         ren::clear();
+        shader_program.use();
         shader_program.set_uniform(aspect_location, window.get_aspect_ratio());
         ren::draw_instances(&game.bat_mesh, bat_transform_buffer);
+
+        ball_program.use();
+        ball_program.set_uniform(aspect_location_ball, window.get_aspect_ratio());
+        ball_program.set_uniform(resolution_location, window.get_size());
+        ball_program.set_uniform(center_location, glm::vec2(game.ball_transforms[0][3]));
         ren::draw_instances(&game.ball_mesh, ball_transform_buffer);
 
         // swap buffers

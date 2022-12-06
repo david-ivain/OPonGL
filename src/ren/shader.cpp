@@ -1,6 +1,7 @@
 #include "shader.h"
 
 #include <fstream>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace ren {
 Shader::Shader(const std::string& source, GLenum type)
@@ -78,5 +79,11 @@ template <>
 void ShaderProgram::set_uniform(GLint location, const float& value)
 {
     glProgramUniform1f(object, location, value);
+}
+
+template <>
+void ShaderProgram::set_uniform(GLint location, const glm::vec2& value)
+{
+    glProgramUniform2fv(object, location, 1, glm::value_ptr(value));
 }
 }
