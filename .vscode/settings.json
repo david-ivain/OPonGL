@@ -3,6 +3,8 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "files.associations": {
         "array": "cpp",
         "istream": "cpp",

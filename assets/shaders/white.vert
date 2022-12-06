@@ -1,8 +1,8 @@
 #version 330 core
 
-layout (location = 0) in vec3 v_position;
-layout (location = 1) in vec2 v_tex_coord;
-layout (location = 3) in mat4 instance_matrix;
+layout(location = 0) in vec3 v_position;
+layout(location = 1) in vec2 v_tex_coord;
+layout(location = 3) in mat4 instance_matrix;
 
 uniform float aspect = 1.0;
 
