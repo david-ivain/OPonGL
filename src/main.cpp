@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -35,6 +36,10 @@ void handle_key(GLFWwindow* window,
             break;
         case GLFW_KEY_SPACE:
             game->launch();
+            break;
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
         default:
             break;
         }
